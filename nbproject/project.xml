@@ -7,9 +7,17 @@
             <view>
                 <items>
                     <source-folder style="tree">
-                        <label>Files</label>
-                        <location>.</location>
+                        <label>src</label>
+                        <location>src</location>
                     </source-folder>
+                    <source-folder style="tree">
+                        <label>test</label>
+                        <location>test</location>
+                    </source-folder>
+					<source-file>
+						<label>rebar.config</label>
+						<location>rebar.config</location>
+					</source-file>
                 </items>
             </view>
         </general-data>
