@@ -3,7 +3,10 @@
 -export([create/1, stub/4]).
 -export([dump_code/1, build_module/1, ignored_function/1]).
 
-create(_Module) -> ok.
+create(Module) ->
+	build_and_load_module(Module),
+	Mod = new_name_as_atom(Module),
+	Mod:new(pid).
 
 stub(_Module, _Fun, _Args, _Result) -> ok.
 
@@ -15,15 +18,24 @@ dump_code(Mod) ->
 		]
 	).
 
+build_and_load_module(Mod) ->
+	{ok, ModName, Binary} = compile:forms(build_module(Mod), [verbose,report_errors,report_warnings]),
+	{module, ModName} = code:load_binary(ModName, "", Binary).
+
 build_module(Name) ->
-	NewName = list_to_atom(atom_to_list(Name) ++ "$$mocked"),
+	NewName = new_name_as_atom(Name),
 	{Exports, Functions} = generate_functions(Name),
-	[{attribute, ?LINE, module, {NewName, ['Pid']}}]
+	[]
+		++ [{attribute, ?LINE, file, {new_name_as_list(Name) ++ ".erl", ?LINE}}]
+		++ [{attribute, ?LINE, module, {NewName, ['Pid']}}]
 		++ attributes(Name)
 		++ [{attribute, ?LINE, export, Exports}]
 		++ Functions
 		++ [{eof, ?LINE}]
 	.
+
+new_name_as_atom(Name) -> list_to_atom(new_name_as_list(Name)).
+new_name_as_list(Name) -> atom_to_list(Name) ++ "$$mocked".
 
 attributes(_Name) -> []. % TODO copy attributes from the mocked module
 
@@ -31,11 +43,12 @@ attributes(_Name) -> []. % TODO copy attributes from the mocked module
 % {[ exports ], [ functions ]}.
 generate_functions(ModuleName) ->
 	ListOfTuples = lists:foldr(
-		fun(E, Acc) ->
+		fun(E = {Name, Arity}, Acc) ->
 			case ignored_function(E) of
 				true -> Acc;
 				_ ->
-					Acc ++ [{ E, create_function(E) }]
+					ModifiedFun = {Name, Arity-1},
+					Acc ++ [{ ModifiedFun, create_function(ModifiedFun) }]
 			end
 		end,
 		[],
@@ -68,7 +81,7 @@ list_of_args(Arity) ->
 	lists:map(fun(N) ->
 			{var, ?LINE, list_to_atom(lists:flatten(io_lib:format("Arg~B", [N])))}
 		end,
-		lists:seq(1, Arity-1) % -1 ro remove the default paramertzed module argument.
+		lists:seq(1, Arity)
 	).
 
 gen_server_call(Args) ->
