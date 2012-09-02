@@ -39,13 +39,13 @@ multiple_stubs_of_the_same_func_are_returned_in_order_test() ->
 
 multiple_stubs_of_the_same_func_are_returned_in_order_with_the_last_one_remaining_test() ->
 	{ok, Pid} = epm_data:start_link(),
-	ok = gen_server:call(Pid, {stub, func, [], {return, ok1}}),
+	ok = epm_data:stub(Pid, func, [], {return, ok1}),
 	ok = gen_server:call(Pid, {stub, func, [], {return, ok2}}),
 	?assertEqual(ok1, gen_server:call(Pid, {call, func, []})),
-	?assertEqual(ok2, gen_server:call(Pid, {call, func, []})),
+	?assertEqual(ok2, epm_data:call(Pid, func, [])),
 	?assertEqual(ok2, gen_server:call(Pid, {call, func, []})).
 
-failure_to_mock_results_in_an_error() ->
+failure_to_mock_results_in_an_error_test() ->
 	{ok, Pid} = epm_data:start_link(),
 	?assertEqual({error, {not_stubbed, func, []}}, gen_server:call(Pid, {call, func, []})).
 
