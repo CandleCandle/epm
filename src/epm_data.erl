@@ -17,11 +17,7 @@ handle_call(state, _From, State) ->
 handle_call({stub, Func, Args, Result}, _From, State) ->
 	{reply, ok,
 		State#state{
-			stubs = State#state.stubs ++
-				[#stub{func = Func,
-					args = Args,
-					result = Result
-				}]
+			stubs = State#state.stubs ++ [#stub{func = Func, args = Args, result = Result }]
 		}
 	}.
 
