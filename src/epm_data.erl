@@ -21,9 +21,12 @@ handle_call({stub, Func, Args, Result}, _From, State) ->
 		}
 	};
 handle_call({call, Func, Args}, _From, State) ->
-	{Stub, Stubs} = find_stub(Func, Args, State),
-	{reply, do_result(Stub#stub.result), State#state{stubs=Stubs}}.
-
+	case find_stub(Func, Args, State) of
+		{Stub, Stubs} ->
+			find_stub(Func, Args, State),
+			{reply, do_result(Stub#stub.result), State#state{stubs=Stubs}};
+		E = {error, _} -> E
+	end.
 
 terminate(_Reason, _State) -> ok.
 
