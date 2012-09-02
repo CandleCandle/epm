@@ -49,5 +49,12 @@ failure_to_mock_results_in_an_error_test() ->
 	{ok, Pid} = epm_data:start_link(),
 	?assertEqual({error, {not_stubbed, func, []}}, gen_server:call(Pid, {call, func, []})).
 
+using_the_any_matcher_in_a_stubbing_test() ->
+	{ok, Pid} = epm_data:start_link(),
+	ok = gen_server:call(Pid, {stub, func, [epm:any()], {return, ok}}),
+	ok = gen_server:call(Pid, {stub, func, [fixed], {return, ok}}),
+	?assertEqual(ok, gen_server:call(Pid, {call, func, [yeah]})),
+	?assertEqual(ok, gen_server:call(Pid, {call, func, [this]})).
+
 % calls
 % stubs

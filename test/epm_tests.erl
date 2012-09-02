@@ -15,4 +15,8 @@ with_change_test() ->
 	epm:stub(Epm, get_field, [], {return, "bar"}),
 	?assertEqual("bar", Epm:get_field()).
 
+with_a_matcher_test() ->
+	Epm = epm:create(module_to_mock),
+	epm:stub(Epm, bar, [any, epm:any()], {return, "bar"}),
+	?assertEqual("bar", Epm:bar(any, something_else)).
 

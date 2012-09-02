@@ -50,11 +50,30 @@ find_stub(Func, Args, State) ->
 
 find_relevent_stubs(Func, Args, Stubs) ->
 	Result = lists:filter(fun(Elem) ->
-			(Elem#stub.func =:= Func) and (Elem#stub.args =:= Args)
+			(Elem#stub.func =:= Func) and (match_args(Elem#stub.args, Args))
 		end,
 		Stubs
 	),
 	io:format("~p~n", [Result]),
 	Result.
+
+match_args(Expected, Actual) ->
+	case length(Expected) =:= length(Actual) of
+		false -> false;
+		_ -> match_individual(Expected, Actual)
+	end.
+match_individual([], []) -> true;
+match_individual([EH | ET], [AH | AT]) ->
+	case match(EH, AH) of
+		true -> match_individual(ET, AT);
+		_ -> false
+	end.
+match(Expected, Actual) ->
+	case Expected of
+		{epm_matcher, Matcher} ->
+			Matcher(Actual);
+		_ ->
+			Expected =:= Actual
+	end.
 
 do_result({return, Value}) -> Value.

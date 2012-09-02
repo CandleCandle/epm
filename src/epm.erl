@@ -1,6 +1,6 @@
 -module(epm).
 
--export([create/1, stub/4]).
+-export([create/1, stub/4, any/0]).
 -export([dump_code/1, build_module/1, ignored_function/1]).
 
 create(Module) ->
@@ -12,6 +12,9 @@ create(Module) ->
 stub(Obj, Func, Args, Result) ->
 	Pid = Obj:'internal$$get_gen_server_pid'(),
 	gen_server:call(Pid, {stub, Func, Args, Result}).
+
+any() ->
+	{epm_matcher, fun(_Actual) -> true end}.
 
 dump_code(Mod) ->
 	io:format("~s~n",
