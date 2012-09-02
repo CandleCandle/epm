@@ -6,10 +6,12 @@
 create(Module) ->
 	build_and_load_module(Module),
 	Mod = new_name_as_atom(Module),
-	Mod:new(pid).
+	{ok, Pid} = epm_data:start_link(),
+	Mod:new(Pid).
 
-stub(_Module, _Fun, _Args, _Result) -> ok.
-
+stub(Obj, Func, Args, Result) ->
+	Pid = Obj:'internal$$get_gen_server_pid'(),
+	gen_server:call(Pid, {stub, Func, Args, Result}).
 
 dump_code(Mod) ->
 	io:format("~s~n",
@@ -30,6 +32,7 @@ build_module(Name) ->
 		++ [{attribute, ?LINE, module, {NewName, ['Pid']}}]
 		++ attributes(Name)
 		++ [{attribute, ?LINE, export, Exports}]
+		++ get_pid_function()
 		++ Functions
 		++ [{eof, ?LINE}]
 	.
@@ -39,6 +42,12 @@ new_name_as_list(Name) -> atom_to_list(Name) ++ "$$mocked".
 
 attributes(_Name) -> []. % TODO copy attributes from the mocked module
 
+get_pid_function() ->
+	FuncName = 'internal$$get_gen_server_pid',
+	[
+		{attribute, ?LINE, export, [{FuncName, 0}]},
+		{function,5,FuncName,0,[{clause,5,[],[],[{var,5,'Pid'}]}]}
+	].
 
 % {[ exports ], [ functions ]}.
 generate_functions(ModuleName) ->
@@ -72,7 +81,7 @@ create_function({Name, Arity}) ->
 				?LINE,
 				ListOfArgs,
 				[],
-				[gen_server_call(ListOfArgs)]
+				[gen_server_call(Name, ListOfArgs)]
 			}
 		]
 	}.
@@ -84,7 +93,7 @@ list_of_args(Arity) ->
 		lists:seq(1, Arity)
 	).
 
-gen_server_call(Args) ->
+gen_server_call(FunName, Args) ->
 	{call, ?LINE, {
 			remote, ?LINE,
 			{atom, ?LINE, gen_server},
@@ -94,7 +103,8 @@ gen_server_call(Args) ->
 			{var, ?LINE, 'Pid'},
 			{tuple, ?LINE,
 				[
-					{atom, ?LINE, call_site},
+					{atom, ?LINE, call},
+					{atom, ?LINE, FunName},
 					generate_arg_list(Args)
 				]
 			}
