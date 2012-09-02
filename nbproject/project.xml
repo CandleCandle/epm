@@ -14,6 +14,10 @@
                         <label>test</label>
                         <location>test</location>
                     </source-folder>
+                    <source-folder style="tree">
+                        <label>include</label>
+                        <location>include</location>
+                    </source-folder>
 					<source-file>
 						<label>rebar.config</label>
 						<location>rebar.config</location>
