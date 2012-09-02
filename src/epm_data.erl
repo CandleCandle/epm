@@ -19,7 +19,25 @@ handle_call({stub, Func, Args, Result}, _From, State) ->
 		State#state{
 			stubs = State#state.stubs ++ [#stub{func = Func, args = Args, result = Result }]
 		}
-	}.
+	};
+handle_call({call, Func, Args}, _From, State) ->
+	{Stub, Stubs} = find_stub(Func, Args, State),
+	{reply, do_result(Stub#stub.result), State#state{stubs=Stubs}}.
 
 
 terminate(_Reason, _State) -> ok.
+
+
+%% %% %% %% internal %% %% %% %%
+find_stub(Func, Args, State) ->
+	Stubs = State#state.stubs,
+	case find_relevent_stubs(Func, Args, Stubs) of
+%		[] -> {error, {not_stubbed, Func, Args}};
+		[Elem] -> {Elem, Stubs}
+%		[Elem, _Rest] -> {Elem, lists:delete(Elem, Stubs)}
+	end.
+
+find_relevent_stubs(_Func, _Args, Stubs) ->
+	lists:filter(fun(_Elem) -> true end, Stubs).
+
+do_result({return, Value}) -> Value.

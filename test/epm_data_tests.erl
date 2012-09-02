@@ -13,12 +13,15 @@ it_exposes_the_state_for_testing_test() ->
 
 it_adds_a_stubbed_function_to_the_state_test() ->
 	{ok, Pid} = epm_data:start_link(),
-
 	ok = gen_server:call(Pid, {stub, func, [], {return, ok}}),
 	State = gen_server:call(Pid, state),
 	Stub = lists:nth(1, State#state.stubs),
 	?assertEqual(#stub{func = func, args = [], result = {return, ok}}, Stub).
 
+it_returns_the_result_from_a_stubbed_function_test() ->
+	{ok, Pid} = epm_data:start_link(),
+	ok = gen_server:call(Pid, {stub, func, [], {return, ok}}),
+	?assertEqual(ok, gen_server:call(Pid, {call, func, []})).
 
 % calls
 % stubs
