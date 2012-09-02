@@ -1,5 +1,5 @@
 
 
 
--record(stub, {mod, args, result}).
--record(state, {stubs}).
+-record(stub, {func, args, result}).
+-record(state, {stubs = []}).
