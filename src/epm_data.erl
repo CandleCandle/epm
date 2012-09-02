@@ -33,8 +33,8 @@ find_stub(Func, Args, State) ->
 	Stubs = State#state.stubs,
 	case find_relevent_stubs(Func, Args, Stubs) of
 %		[] -> {error, {not_stubbed, Func, Args}};
-		[Elem] -> {Elem, Stubs}
-%		[Elem, _Rest] -> {Elem, lists:delete(Elem, Stubs)}
+		[Elem] -> {Elem, Stubs};
+		[Elem, _Rest] -> {Elem, lists:delete(Elem, Stubs)}
 	end.
 
 find_relevent_stubs(Func, Args, Stubs) ->
