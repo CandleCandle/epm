@@ -50,7 +50,7 @@ find_stub(Func, Args, State) ->
 
 find_relevent_stubs(Func, Args, Stubs) ->
 	Result = lists:filter(fun(Elem) ->
-			Res = Elem#stub.func =:= Func, Elem#stub.args =:= Args, Res
+			(Elem#stub.func =:= Func) and (Elem#stub.args =:= Args)
 		end,
 		Stubs
 	),
