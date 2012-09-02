@@ -22,7 +22,6 @@ handle_call({stub, Func, Args, Result}, _From, State) ->
 	};
 handle_call({call, Func, Args}, _From, State) ->
 	{Stub, Stubs} = find_stub(Func, Args, State),
-	io:format("xxx~n~p~n~p~nxxx~n", [Stub, Stubs]),
 	{reply, do_result(Stub#stub.result), State#state{stubs=Stubs}}.
 
 
@@ -40,20 +39,7 @@ find_stub(Func, Args, State) ->
 
 find_relevent_stubs(Func, Args, Stubs) ->
 	Result = lists:filter(fun(Elem) ->
-			Res = Elem#stub.func =:= Func, Elem#stub.args =:= Args,
-			io:format("~nElemFunc : ~p~n" ++
-					    "Func     : ~p~n" ++
-					    "ElemArgs : ~p~n" ++
-					    "Args     : ~p~n" ++
-						"Result   : ~p~n",
-					[
-						Elem#stub.func,
-						Func,
-						Elem#stub.args,
-						Args,
-						Res
-					]),
-				Res
+			Res = Elem#stub.func =:= Func, Elem#stub.args =:= Args, Res
 		end,
 		Stubs
 	),
