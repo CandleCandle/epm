@@ -23,5 +23,15 @@ it_returns_the_result_from_a_stubbed_function_test() ->
 	ok = gen_server:call(Pid, {stub, func, [], {return, ok}}),
 	?assertEqual(ok, gen_server:call(Pid, {call, func, []})).
 
+it_returns_the_correct_stubbed_function_test() ->
+	{ok, Pid} = epm_data:start_link(),
+	ok = gen_server:call(Pid, {stub, other_func, [], {return, ok}}),
+	ok = gen_server:call(Pid, {stub, func, [], {return, ok}}),
+	?assertEqual(ok, gen_server:call(Pid, {call, func, []})).
+
+% multiple_stubs_of_the_same_func_are_returned_in_order
+% multiple_stubs_of_the_same_func_are_returned_in_order_with_the_last_one_remaining
+%
+
 % calls
 % stubs
