@@ -80,7 +80,7 @@ ignored_function(E = {F, _A}) ->
 			end
 		end,
 		% functions listed here without an arity mean that any function of that name is ignored.
-		[ {new,1}, {instance}, {module_info,0}, {module_info,1} ]
+		[ {new}, {instance}, {module_info,0}, {module_info,1} ]
 	).
 
 create_function({Name, Arity}) ->
