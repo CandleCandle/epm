@@ -71,10 +71,16 @@ generate_functions(ModuleName) ->
 		lists:flatmap(fun({_, Fu}) -> [Fu] end, ListOfTuples)
 	}.
 
-ignored_function(E) ->
+ignored_function(E = {F, _A}) ->
 	lists:any(
-		fun (IgE) -> E =:= IgE end,
-		[ {new,1}, {instance,1}, {module_info,0}, {module_info,1} ]
+		fun (IgE) ->
+			case IgE of
+				{IgF} -> IgF =:= F;
+				_ -> E =:= IgE
+			end
+		end,
+		% functions listed here without an arity mean that any function of that name is ignored.
+		[ {new,1}, {instance}, {module_info,0}, {module_info,1} ]
 	).
 
 create_function({Name, Arity}) ->
