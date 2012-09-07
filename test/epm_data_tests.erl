@@ -56,5 +56,11 @@ using_the_any_matcher_in_a_stubbing_test() ->
 	?assertEqual(ok, gen_server:call(Pid, {call, func, [yeah]})),
 	?assertEqual(ok, gen_server:call(Pid, {call, func, [this]})).
 
+using_the_any_matcher_with_mismatching_arg_lengths_test() ->
+	{ok, Pid} = epm_data:start_link(),
+	ok = gen_server:call(Pid, {stub, func, [epm:any()], {return, ok}}),
+	?assertEqual({error,{not_stubbed,func,[yeah,that]}}, gen_server:call(Pid, {call, func, [yeah, that]})).
+
+
 % calls
 % stubs
