@@ -6,7 +6,7 @@
 create(Module) ->
 	build_and_load_module(Module),
 	Mod = new_name_as_atom(Module),
-	{ok, Pid} = epm_data:start_link(),
+	{ok, Pid} = epm_data:start_link(Module),
 	Mod:new(Pid).
 
 stub(Obj, Func, Args, Result) ->

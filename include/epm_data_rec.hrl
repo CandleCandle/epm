@@ -2,4 +2,4 @@
 
 
 -record(stub, {func, args, result}).
--record(state, {stubs = []}).
+-record(state, {module_name, stubs = []}).
