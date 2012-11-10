@@ -3,11 +3,11 @@
 
 -include("../include/epm_data_rec.hrl").
 
--export([start_link/0, stub/4, call/3]).
+-export([start_link/1, stub/4, call/3]).
 -export([init/1, handle_call/3, terminate/2]).
 
-start_link() ->
-	gen_server:start_link(?MODULE, [], []).
+start_link(ModuleName) ->
+	gen_server:start_link(?MODULE, [ModuleName], []).
 
 stub(Pid, Func, Args, Result) ->
 	gen_server:call(Pid, {stub, Func, Args, Result}).
@@ -17,8 +17,8 @@ call(Pid, Func, Args) ->
 
 
 %% %% %% %% gen_server %% %% %% %%
-init(_Args) ->
-	{ok, #state{}}.
+init([ModuleName]) ->
+	{ok, #state{module_name=ModuleName}}.
 
 handle_call(state, _From, State) ->
 	{reply, State, State};
@@ -43,7 +43,7 @@ terminate(_Reason, _State) -> ok.
 find_stub(Func, Args, State) ->
 	Stubs = State#state.stubs,
 	case find_relevent_stubs(Func, Args, Stubs) of
-		[] -> {error, {not_stubbed, Func, Args}};
+		[] -> {error, {not_stubbed, State#state.module_name, Func, Args}};
 		[Elem] -> {Elem, Stubs};
 		[Elem, _Rest] -> {Elem, lists:delete(Elem, Stubs)}
 	end.

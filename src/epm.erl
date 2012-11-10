@@ -6,7 +6,7 @@
 create(Module) ->
 	build_and_load_module(Module),
 	Mod = new_name_as_atom(Module),
-	{ok, Pid} = epm_data:start_link(),
+	{ok, Pid} = epm_data:start_link(Module),
 	Mod:new(Pid).
 
 stub(Obj, Func, Args, Result) ->
@@ -71,10 +71,16 @@ generate_functions(ModuleName) ->
 		lists:flatmap(fun({_, Fu}) -> [Fu] end, ListOfTuples)
 	}.
 
-ignored_function(E) ->
+ignored_function(E = {F, _A}) ->
 	lists:any(
-		fun (IgE) -> E =:= IgE end,
-		[ {new,1}, {instance,1}, {module_info,0}, {module_info,1} ]
+		fun (IgE) ->
+			case IgE of
+				{IgF} -> IgF =:= F;
+				_ -> E =:= IgE
+			end
+		end,
+		% functions listed here without an arity mean that any function of that name is ignored.
+		[ {new}, {instance}, {module_info,0}, {module_info,1} ]
 	).
 
 create_function({Name, Arity}) ->
