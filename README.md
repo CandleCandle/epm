@@ -34,11 +34,13 @@ Given the module that you want to mock being:
 ### Error cases
 
 Failure to mock a function that is called will result in a return value of [2]
+
 	{error, {not_stubbed, Func, Args}}
 
 ### Multiple Stubbings
 
 Mocking a function twice with the same arguments means that the return values are returned in the same order they were mocked in for example:
+
 	epm:stub(Epm, bar, [any, something], {return, "foo"}),
 	epm:stub(Epm, bar, [any, something], {return, "bar"}),
 	?assertEqual("foo", Epm:bar(any, something)),
@@ -47,12 +49,15 @@ Mocking a function twice with the same arguments means that the return values ar
 ### Matchers
 
 Matchers can be used. Line two is an example of a matcher that matches any possible value for the second argument.
+
 	Epm = epm:create(module_to_mock),
 	epm:stub(Epm, bar, [any, epm:any()], {return, "bar"}),
 	?assertEqual("bar", Epm:bar(any, something_else)).
 
 The any() matcher is a tuple:
+
 	{epm_matcher, fun(_Actual) -> true end}.
+
 With the second element returning the atoms: 'true' or 'false'
 
 
