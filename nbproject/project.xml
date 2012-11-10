@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://www.netbeans.org/ns/project/1">
-    <type>org.netbeans.modules.ant.freeform</type>
-    <configuration>
-        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
-            <name>epm</name>
-            <view>
-                <items>
-                    <source-folder style="tree">
-                        <label>src</label>
-                        <location>src</location>
-                    </source-folder>
-                    <source-folder style="tree">
-                        <label>test</label>
-                        <location>test</location>
-                    </source-folder>
-                    <source-folder style="tree">
-                        <label>include</label>
-                        <location>include</location>
-                    </source-folder>
+	<type>org.netbeans.modules.ant.freeform</type>
+	<configuration>
+		<general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+			<name>epm</name>
+			<view>
+				<items>
+					<source-folder style="tree">
+						<label>src</label>
+						<location>src</location>
+					</source-folder>
+					<source-folder style="tree">
+						<label>test</label>
+						<location>test</location>
+					</source-folder>
+					<source-folder style="tree">
+						<label>include</label>
+						<location>include</location>
+					</source-folder>
 					<source-file>
 						<label>rebar.config</label>
 						<location>rebar.config</location>
 					</source-file>
-                </items>
-            </view>
-        </general-data>
-    </configuration>
+				</items>
+			</view>
+		</general-data>
+	</configuration>
 </project>
