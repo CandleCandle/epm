@@ -20,3 +20,10 @@ with_a_matcher_test() ->
 	epm:stub(Epm, bar, [any, epm:any()], {return, "bar"}),
 	?assertEqual("bar", Epm:bar(any, something_else)).
 
+with_multiple_stubs_test() ->
+	Epm = epm:create(module_to_mock),
+	epm:stub(Epm, bar, [any, epm:any()], {return, "foo"}),
+	epm:stub(Epm, bar, [any, epm:any()], {return, "bar"}),
+	?assertEqual("foo", Epm:bar(any, something)),
+	?assertEqual("bar", Epm:bar(any, something_else)).
+
